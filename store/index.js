@@ -4,7 +4,7 @@ export const state = () => ({
 
 export const mutations = {
   setFridge (state, fridge) {
-    state.fridgeA = fridge
+    state.fridgeA = fridge || []
   },
   addToFridge (state, item) {
     state.fridgeA.push(item)
@@ -21,14 +21,13 @@ export const mutations = {
 }
 
 export const actions = {
-  nuxtServerInit ({ dispatch }) {
-    if (process.browser) {
-      dispatch('loadLocalStorage')
-    }
+  async nuxtServerInit ({ dispatch }) {
+    await dispatch('loadLocalStorage')
   },
   loadLocalStorage ({ commit }) {
     if (process.browser && localStorage.getItem('fridgeA')) {
-      commit('setFridge', JSON.parse(localStorage.getItem('fridgeA')))
+      const fridge = JSON.parse(localStorage.getItem('fridgeA'))
+      commit('setFridge', fridge)
     }
   },
   saveToLocalStorage ({ state }) {

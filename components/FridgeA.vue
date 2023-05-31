@@ -60,9 +60,9 @@ export default {
     return {
       newItem: {
         name: '',
-        cost: 0,
+        cost: '',
         expirationDate: '',
-        quantity: 0
+        quantity: ''
       },
       updateItem: null,
       oldName: null,
@@ -78,38 +78,56 @@ export default {
   computed: {
     ...mapState(['fridgeA'])
   },
+  async mounted () {
+    await this.$store.dispatch('loadLocalStorage')
+  },
+  beforeDestroy () {
+    this.$store.dispatch('saveToLocalStorage')
+  },
   methods: {
     ...mapMutations(['addToFridge', 'removeFromFridge', 'updateFridgeItem']),
     ...mapActions(['saveToLocalStorage']),
+
     startUpdate (item) {
-      // Logic for starting the update process
+      this.updateItem = { ...item }
+      this.oldName = item.name
     },
     commitUpdate () {
-      // Logic for committing the update
+      const updatedItem = {
+        oldName: this.oldName,
+        newItem: {
+          name: this.updateItem.name,
+          cost: this.updateItem.cost,
+          expirationDate: this.updateItem.expirationDate,
+          quantity: this.updateItem.quantity
+        }
+      }
+      this.updateFridgeItem(updatedItem)
+      this.updateItem = null
+      this.oldName = null
+      this.saveToLocalStorage()
     },
     cancelUpdate () {
-      // Logic for cancelling the update
+      this.updateItem = null
+      this.oldName = null
     },
     removeItem (itemName) {
-      // Logic for removing an item
+      this.removeFromFridge(itemName)
+      this.saveToLocalStorage()
     },
     addItem () {
-      // Logic for adding an item to the fridgeA array
       const newItem = {
         name: this.newItem.name,
         cost: this.newItem.cost,
         expirationDate: this.newItem.expirationDate,
         quantity: this.newItem.quantity
       }
-
-      // Dispatch the addToFridge mutation from Vuex store
-      this.$store.commit('addToFridge', newItem)
-
-      // Clear the input fields after adding the item
+      this.addToFridge(newItem)
       this.newItem.name = ''
-      this.newItem.cost = 0
+      this.newItem.cost = ''
       this.newItem.expirationDate = ''
-      this.newItem.quantity = 0
+      this.newItem.quantity = ''
+      this.saveToLocalStorage()
     }
   }
 }
