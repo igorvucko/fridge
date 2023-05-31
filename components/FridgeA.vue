@@ -2,19 +2,36 @@
   <div>
     <h1>Fridge</h1>
 
-    <v-data-table :headers="headers" :items="fridgeA" class="elevation-1">
+    <v-data-table
+      :headers="headers"
+      :items="fridgeA"
+      class="elevation-1"
+      :footer-props="{
+        'items-per-page-options': [10, 20, 30],
+        'show-current-page': true,
+        'items-per-page-text': 'Items per page'
+      }"
+    >
       <!-- eslint-disable vue/valid-v-slot -->
       <template #item.name="{ item }">
-        {{ item.name }}
+        <div class="text-center">
+          {{ item.name }}
+        </div>
       </template>
       <template #item.cost="{ item }">
-        {{ item.cost }}
+        <div class="text-center">
+          {{ item.cost }}
+        </div>
       </template>
       <template #item.expirationDate="{ item }">
-        {{ item.expirationDate }}
+        <div class="text-center">
+          {{ item.expirationDate }}
+        </div>
       </template>
       <template #item.quantity="{ item }">
-        {{ item.quantity }}
+        <div class="text-center">
+          {{ item.quantity }}
+        </div>
       </template>
       <!-- eslint-disable vue/valid-v-slot -->
       <template #item.action="{ item }">
@@ -32,22 +49,27 @@
       <input v-model="updateItem.cost" placeholder="Item cost">
       <input v-model="updateItem.expirationDate" placeholder="Expiration Date">
       <input v-model="updateItem.quantity" placeholder="Quantity">
-      <v-btn color="primary" @click="commitUpdate">
+      <v-btn color="primary" dark @click="commitUpdate">
         Update Item
       </v-btn>
-      <v-btn color="red" @click="cancelUpdate">
+      <v-btn color="red" dark @click="cancelUpdate">
         Cancel
       </v-btn>
     </div>
 
-    <div v-else>
-      <input v-model="newItem.name" placeholder="Item name">
-      <input v-model="newItem.cost" placeholder="Item cost">
-      <input v-model="newItem.expirationDate" placeholder="Expiration Date">
-      <input v-model="newItem.quantity" placeholder="Quantity">
-      <v-btn color="primary" dark @click="addItem">
-        Add Item
-      </v-btn>
+    <div v-else class="action-container">
+      <div>
+        <input v-model="newItem.name" placeholder="Item name">
+        <input v-model="newItem.cost" placeholder="Item cost">
+        <input v-model="newItem.expirationDate" placeholder="Expiration Date">
+        <input v-model="newItem.quantity" placeholder="Quantity">
+        <v-btn color="primary" dark @click="addItem">
+          Add Item
+        </v-btn>
+      </div>
+      <div class="total-cost">
+        Total Cost: {{ calculateTotalCost }}
+      </div>
     </div>
   </div>
 </template>
@@ -76,7 +98,10 @@ export default {
     }
   },
   computed: {
-    ...mapState(['fridgeA'])
+    ...mapState(['fridgeA']),
+    calculateTotalCost () {
+      return this.fridgeA.reduce((total, item) => total + parseFloat(item.cost || 0), 0)
+    }
   },
   async mounted () {
     await this.$store.dispatch('loadLocalStorage')
@@ -132,3 +157,18 @@ export default {
   }
 }
 </script>
+
+<style>
+.centered-table >>> .v-data-table__wrapper table td {
+  text-align: center;
+}
+.action-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: right;
+}
+
+.total-cost {
+  font-weight: bold;
+  margin-left: 20px;  /* Adjust this value as needed */
+}
