@@ -35,7 +35,7 @@
       </template>
       <!-- eslint-disable vue/valid-v-slot -->
       <template #item.action="{ item }">
-        <v-icon small class="mr-2" @click="startUpdate(item)">
+        <v-icon small class = "mr-1" @click="startUpdate(item)">
           mdi-pencil
         </v-icon>
         <v-icon small @click="removeItem(item.name)">
