@@ -60,17 +60,17 @@
     <div v-else class="action-container">
       <div>
         <input v-model="newItem.name" placeholder="Item name">
-        <input v-model="newItem.cost" placeholder="Item cost">
         <input v-model="newItem.expirationDate" placeholder="Expiration Date">
         <input v-model="newItem.quantity" placeholder="Quantity">
+        <input v-model="newItem.cost" placeholder="Item cost">
         <v-btn color="primary" dark @click="addItem">
           Add Item
         </v-btn>
+        <span class="total-cost ml-96 pl-44">
+        <span>Total Cost: {{ calculateTotalCost }}</span>
+        </span>
       </div>
-      <div class="total-cost">
-        Total Cost: {{ calculateTotalCost }}
-      </div>
-    </div>
+       </div>
   </div>
 </template>
 
@@ -157,18 +157,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.centered-table >>> .v-data-table__wrapper table td {
-  text-align: center;
-}
-.action-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: right;
-}
-
-.total-cost {
-  font-weight: bold;
-  margin-left: 20px;  /* Adjust this value as needed */
-}
